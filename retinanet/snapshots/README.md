@@ -1,0 +1,1 @@
+Eğitime devam etmek için önceden eğitilmiş snapshot dosyasını [burada](https://drive.google.com/open?id=1TUQCY4dHaW2YZ6ymNyk9PsDbJQsm0xJR) indiriniz ve bu klasör altına kopyalayınız.
