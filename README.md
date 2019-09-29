@@ -53,7 +53,7 @@ Eğitilmiş model ile ```dataset_test``` klasöründeki resimler üzerinde nesne
 Tahmin (prediction) sonuçlarını ```results``` klasörü altına resmin üzerine çizilmiş şekilde çıkartılacaktır.
 
 <h2 align="center">:tada: Sonuçlar (Results)</h2>
-<p align="center"><img width="90%" src="retinanet/results/1065.jpg" /></p>
+<p align="center"><img width="100%" src="retinanet/results/results.gif" /></p>
 
 <h2 align="center">:satellite: Contact (İletişim)</h2>
 
