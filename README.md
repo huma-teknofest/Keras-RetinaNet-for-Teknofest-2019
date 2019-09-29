@@ -19,7 +19,6 @@ TEKNOFEST 2019 Yapay Zeka Yarışması kapsamında takımlar bir drone ile önce
 - opencv
 - json
 - tqdm
-
 - [keras-retinanet](https://github.com/fizyr/keras-retinanet/tree/master/keras_retinanet)
 
 ### :blue_book: Klasör Yapısı (Folder Structure)
