@@ -4,8 +4,8 @@
 <p>Using RetinaNet for object detection from drone images in Teknofest istanbul 2019 Artificial Intelligence Competition</p>
 
 
-#### :rocket: Teknofest 2019 - Yapay Zeka Yarışması:
-TEKNOFEST 2019 Yapay Zeka Yarışması kapsamında takımlar bir drone ile önceden kaydedilmiş görüntüler üzerinden nesne tespiti yapacaklardır. Drone uçuş  manevraları ve görüntünün odaklandığı yerler ile alçak irtifada hareket eden bir hava aracından görülen görüntüleri temsil edecektir. Yarışma  esnasında  test  amaçlı  kullanılacak  videolar, önceden etiketlenmiş  olacak, yarışmacılar verilen süre içerisinde ne kadar doğru tespit yaptıklarına göre puanlandırılacaklardır.
+### :rocket: Teknofest 2019 - Yapay Zeka Yarışması:
+TEKNOFEST 2019 Yapay Zeka Yarışması kapsamında takımlar bir drone ile önceden kaydedilmiş görüntüler üzerinden verilen süre içerisinde araç ve insan tespitini özel bir metrik üzerinden IoU puanı ile puanlandırılmıştır.
 
 
 <h2 align="center">:clipboard: Başlangıç Kılavuzu (Getting Started)</h2>
@@ -20,13 +20,15 @@ TEKNOFEST 2019 Yapay Zeka Yarışması kapsamında takımlar bir drone ile önce
 - json
 - tqdm
 
+- [keras-retinanet](https://github.com/fizyr/keras-retinanet/tree/master/keras_retinanet)
+
 ### :blue_book: Klasör Yapısı (Folder Structure)
 
 ```
 main_dir
 - dataset_test
 - retinanet
-    - keras_retinanet ([source](https://github.com/fizyr/keras-retinanet/tree/master/keras_retinanet))
+    - keras_retinanet
     - models
         - teknofest19_huma_resnet50_21_37_inference.h5
     - snapshots
