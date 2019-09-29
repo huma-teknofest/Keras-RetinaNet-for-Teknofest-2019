@@ -4,13 +4,13 @@
 <p>Using RetinaNet for object detection from drone images in Teknofest istanbul 2019 Artificial Intelligence Competition</p>
 
 
-##### Teknofest 2019 - Yapay Zeka Yarışması:
+#### :rocket: Teknofest 2019 - Yapay Zeka Yarışması:
 TEKNOFEST 2019 Yapay Zeka Yarışması kapsamında takımlar bir drone ile önceden kaydedilmiş görüntüler üzerinden nesne tespiti yapacaklardır. Drone uçuş  manevraları ve görüntünün odaklandığı yerler ile alçak irtifada hareket eden bir hava aracından görülen görüntüleri temsil edecektir. Yarışma  esnasında  test  amaçlı  kullanılacak  videolar, önceden etiketlenmiş  olacak, yarışmacılar verilen süre içerisinde ne kadar doğru tespit yaptıklarına göre puanlandırılacaklardır.
 
 
 <h2 align="center">:clipboard: Başlangıç Kılavuzu (Getting Started)</h2>
 
-### :dvd: Ön Koşullar (Software Prerequisites)
+### :floppy_disk: Ön Koşullar (Software Prerequisites)
 
 - keras
 - keras-resnet
@@ -51,15 +51,10 @@ Test yapabilmeniz için örnek test görüntülerini [buradan](https://drive.goo
 Eğitilmiş model ile ```dataset_test``` klasöründeki resimler üzerinde nesne tespiti yapmak için ```detect_all_images.py``` python programını çalıştırabilirsiniz.
 Tahmin (prediction) sonuçlarını ```results``` klasörü altına resmin üzerine çizilmiş şekilde çıkartılacaktır.
 
-<h2 align="center">:watch: Sonuçlar (Results)</h2>
-<p align="center"><img width="40%" src="retinanet/results/1065.jpg" /></p>
+<h2 align="center">:tada: Sonuçlar (Results)</h2>
+<p align="center"><img width="90%" src="retinanet/results/1065.jpg" /></p>
 
-<h2 align="center">:alien: Contact (İletişim)</h2>
+<h2 align="center">:satellite: Contact (İletişim)</h2>
 
-* [Takım Web Sitesi](https://huma-teknofest.github.io/)
-* [E-posta Adresi](huma.teknofest@gmail.com)
-
-
-
-
-
+* :globe_with_meridians: [Takım Web Sitesi](https://huma-teknofest.github.io/)
+* :mailbox: [E-posta Adresi](huma.teknofest@gmail.com)
