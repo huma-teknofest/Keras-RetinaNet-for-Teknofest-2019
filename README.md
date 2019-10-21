@@ -7,6 +7,12 @@
 ### :rocket: Teknofest 2019 - Yapay Zeka Yarışması:
 TEKNOFEST 2019 Yapay Zeka Yarışması kapsamında takımlar bir drone ile önceden kaydedilmiş görüntüler üzerinden verilen süre içerisinde araç ve insan tespitini özel bir metrik üzerinden IoU puanı ile puanlandırılmıştır.
 
+<h2 align="center">:books: Öğretici Döküman (Tutorial)</h2>
+
+Keras RetinaNet kurulum ve kendi veri kümenizi eğitmek ve test etmek için detaylı öğretici dökümanını [buradan](https://medium.com/@sddkal/keras-retinanet-d588f87b0350) inceleyebilirsiniz.
+
+
+
 
 <h2 align="center">:clipboard: Başlangıç Kılavuzu (Getting Started)</h2>
 
