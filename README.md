@@ -17,15 +17,45 @@ Keras RetinaNet kurulum ve kendi veri kümenizi eğitmek ve test etmek için det
 <h2 align="center">:clipboard: Başlangıç Kılavuzu (Getting Started)</h2>
 
 ### :floppy_disk: Ön Koşullar (Software Prerequisites)
-
-- keras
-- keras-resnet
-- tensorflow
-- numpy
-- opencv
-- json
+- cython
+- pycocotools==2.0.0
+- keras-resnet==0.2.0
+- h5py==2.10.0
+- keras==2.4.3
+- matplotlib
+- numpy==1.19.5
+- six==1.15.0
+- opencv-python==3.4.13.47
+- pillow
+- progressbar2
+- tensorflow-gpu==2.4.1
+- git+https://github.com/cocodataset/cocoapi.git#subdirectory=PythonAPI
 - tqdm
-- [keras-retinanet](https://github.com/fizyr/keras-retinanet/tree/master/keras_retinanet)
+
+### Kurulum
+Python 3.7 kurulum ve virtual env oluşturma 
+
+- `sudo apt install python3.7 python3-venv python3.7-venv`
+
+- `sudo apt-get install python3.7-dev`
+
+- `python3.7 -m venv .py37-venv`
+
+- `source .py37-venv/bin/activate`
+
+Ön koşullu paketlerin kurulumu
+
+- `pip3 install cython`
+
+- `pip3 install numpy==1.19.5`
+
+- `pip3 install -r requirements.txt`
+
+keras_retinanet kütüphanesinin derlenmesi
+
+- `pip3 install .`
+
+- `python3 setup.py build_ext --inplace`
 
 ### :blue_book: Klasör Yapısı (Folder Structure)
 
