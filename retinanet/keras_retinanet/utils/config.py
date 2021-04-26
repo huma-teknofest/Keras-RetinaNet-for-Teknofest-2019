@@ -16,13 +16,27 @@ limitations under the License.
 
 import configparser
 import numpy as np
-import keras
+from tensorflow import keras
 from ..utils.anchors import AnchorParameters
 
 
 def read_config_file(config_path):
     config = configparser.ConfigParser()
-    config.read(config_path)
+
+    with open(config_path, 'r') as file:
+        config.read_file(file)
+
+    assert 'anchor_parameters' in config, \
+        "Malformed config file. Verify that it contains the anchor_parameters section."
+
+    config_keys = set(config['anchor_parameters'])
+    default_keys = set(AnchorParameters.default.__dict__.keys())
+
+    assert config_keys <= default_keys, \
+        "Malformed config file. These keys are not valid: {}".format(config_keys - default_keys)
+
+    if 'pyramid_levels' in config:
+        assert('levels' in config['pyramid_levels']), "pyramid levels specified by levels key"
 
     return config
 
@@ -32,5 +46,12 @@ def parse_anchor_parameters(config):
     scales  = np.array(list(map(float, config['anchor_parameters']['scales'].split(' '))), keras.backend.floatx())
     sizes   = list(map(int, config['anchor_parameters']['sizes'].split(' ')))
     strides = list(map(int, config['anchor_parameters']['strides'].split(' ')))
+    assert (len(sizes) == len(strides)), "sizes and strides should have an equal number of values"
 
     return AnchorParameters(sizes, strides, ratios, scales)
+
+
+def parse_pyramid_levels(config):
+    levels = list(map(int, config['pyramid_levels']['levels'].split(' ')))
+
+    return levels

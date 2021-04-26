@@ -48,9 +48,9 @@ def draw_caption(image, box, caption, color):
     ((text_width, text_height), _) = cv2.getTextSize(caption, cv2.FONT_HERSHEY_SIMPLEX, 0.45, 1)
     cv2.rectangle(image, (b[0], b[1] - int(1.3 * text_height)), (b[0] + text_width, b[1]), color, -1)
     cv2.putText(image, caption, (b[0], b[1] - int(0.3 * text_height)), cv2.FONT_HERSHEY_SIMPLEX, 0.45,(0, 0, 0), lineType=cv2.LINE_AA)
-    
 
-def draw_boxes(image, boxes, color, thickness=1):
+
+def draw_boxes(image, boxes, color, thickness=2):
     """ Draws boxes on an image with a given color.
 
     # Arguments

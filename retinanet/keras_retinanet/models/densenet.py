@@ -14,9 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
-from keras.applications import densenet
-from keras.utils import get_file
+from tensorflow import keras
 
 from . import retinanet
 from . import Backbone
@@ -24,9 +22,9 @@ from ..utils.image import preprocess_image
 
 
 allowed_backbones = {
-    'densenet121': ([6, 12, 24, 16], densenet.DenseNet121),
-    'densenet169': ([6, 12, 32, 32], densenet.DenseNet169),
-    'densenet201': ([6, 12, 48, 32], densenet.DenseNet201),
+    'densenet121': ([6, 12, 24, 16], keras.applications.densenet.DenseNet121),
+    'densenet169': ([6, 12, 32, 32], keras.applications.densenet.DenseNet169),
+    'densenet201': ([6, 12, 48, 32], keras.applications.densenet.DenseNet201),
 }
 
 
@@ -54,7 +52,7 @@ class DenseNetBackbone(Backbone):
             raise ValueError('Weights for "channels_first" format are not available.')
 
         weights_url = origin + file_name.format(self.backbone)
-        return get_file(file_name.format(self.backbone), weights_url, cache_subdir='models')
+        return keras.utils.get_file(file_name.format(self.backbone), weights_url, cache_subdir='models')
 
     def validate(self):
         """ Checks whether the backbone string is correct.
@@ -93,13 +91,21 @@ def densenet_retinanet(num_classes, backbone='densenet121', inputs=None, modifie
     layer_outputs = [model.get_layer(name='conv{}_block{}_concat'.format(idx + 2, block_num)).output for idx, block_num in enumerate(blocks)]
 
     # create the densenet backbone
-    model = keras.models.Model(inputs=inputs, outputs=layer_outputs[1:], name=model.name)
+    # layer_outputs contains 4 layers
+    model = keras.models.Model(inputs=inputs, outputs=layer_outputs, name=model.name)
 
     # invoke modifier if given
     if modifier:
         model = modifier(model)
 
     # create the full model
-    model = retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=model.outputs, **kwargs)
+    backbone_layers = {
+        'C2': model.outputs[0],
+        'C3': model.outputs[1],
+        'C4': model.outputs[2],
+        'C5': model.outputs[3]
+    }
+
+    model = retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=backbone_layers, **kwargs)
 
     return model

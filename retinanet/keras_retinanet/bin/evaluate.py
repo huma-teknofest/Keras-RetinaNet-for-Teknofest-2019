@@ -18,9 +18,6 @@ import argparse
 import os
 import sys
 
-import keras
-import tensorflow as tf
-
 # Allow relative imports when being executed as script.
 if __name__ == "__main__" and __package__ is None:
     sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
@@ -31,22 +28,25 @@ if __name__ == "__main__" and __package__ is None:
 from .. import models
 from ..preprocessing.csv_generator import CSVGenerator
 from ..preprocessing.pascal_voc import PascalVocGenerator
-from ..utils.config import read_config_file, parse_anchor_parameters
+from ..utils.anchors import make_shapes_callback
+from ..utils.config import read_config_file, parse_anchor_parameters, parse_pyramid_levels
 from ..utils.eval import evaluate
-from ..utils.keras_version import check_keras_version
+from ..utils.gpu import setup_gpu
+from ..utils.tf_version import check_tf_version
 
 
-def get_session():
-    """ Construct a modified tf session.
-    """
-    config = tf.ConfigProto()
-    config.gpu_options.allow_growth = True
-    return tf.Session(config=config)
-
-
-def create_generator(args):
+def create_generator(args, preprocess_image):
     """ Create generators for evaluation.
     """
+    common_args = {
+        'config'           : args.config,
+        'image_min_side'   : args.image_min_side,
+        'image_max_side'   : args.image_max_side,
+        'no_resize'        : args.no_resize,
+        'preprocess_image' : preprocess_image,
+        'group_method'     : args.group_method
+    }
+
     if args.dataset_type == 'coco':
         # import here to prevent unnecessary dependency on cocoapi
         from ..preprocessing.coco import CocoGenerator
@@ -54,25 +54,23 @@ def create_generator(args):
         validation_generator = CocoGenerator(
             args.coco_path,
             'val2017',
-            image_min_side=args.image_min_side,
-            image_max_side=args.image_max_side,
-            config=args.config
+            shuffle_groups=False,
+            **common_args
         )
     elif args.dataset_type == 'pascal':
         validation_generator = PascalVocGenerator(
             args.pascal_path,
             'test',
-            image_min_side=args.image_min_side,
-            image_max_side=args.image_max_side,
-            config=args.config
+            image_extension=args.image_extension,
+            shuffle_groups=False,
+            **common_args
         )
     elif args.dataset_type == 'csv':
         validation_generator = CSVGenerator(
             args.annotations,
             args.classes,
-            image_min_side=args.image_min_side,
-            image_max_side=args.image_max_side,
-            config=args.config
+            shuffle_groups=False,
+            **common_args
         )
     else:
         raise ValueError('Invalid data type received: {}'.format(args.dataset_type))
@@ -92,6 +90,7 @@ def parse_args(args):
 
     pascal_parser = subparsers.add_parser('pascal')
     pascal_parser.add_argument('pascal_path', help='Path to dataset directory (ie. /tmp/VOCdevkit).')
+    pascal_parser.add_argument('--image-extension',   help='Declares the dataset images\' extension.', default='.jpg')
 
     csv_parser = subparsers.add_parser('csv')
     csv_parser.add_argument('annotations', help='Path to CSV file containing annotations for evaluation.')
@@ -107,7 +106,9 @@ def parse_args(args):
     parser.add_argument('--save-path',        help='Path for saving images with detections (doesn\'t work for COCO).')
     parser.add_argument('--image-min-side',   help='Rescale the image so the smallest side is min_side.', type=int, default=800)
     parser.add_argument('--image-max-side',   help='Rescale the image if the largest side is larger than max_side.', type=int, default=1333)
+    parser.add_argument('--no-resize',        help='Don''t rescale the image.', action='store_true')
     parser.add_argument('--config',           help='Path to a configuration parameters .ini file (only used with --convert-model).')
+    parser.add_argument('--group-method',     help='Determines how images are grouped together', type=str, default='ratio', choices=['none', 'random', 'ratio'])
 
     return parser.parse_args(args)
 
@@ -118,13 +119,12 @@ def main(args=None):
         args = sys.argv[1:]
     args = parse_args(args)
 
-    # make sure keras is the minimum required version
-    check_keras_version()
+    # make sure tensorflow is the minimum required version
+    check_tf_version()
 
     # optionally choose specific GPU
     if args.gpu:
-        os.environ['CUDA_VISIBLE_DEVICES'] = args.gpu
-    keras.backend.tensorflow_backend.set_session(get_session())
+        setup_gpu(args.gpu)
 
     # make save path if it doesn't exist
     if args.save_path is not None and not os.path.exists(args.save_path):
@@ -135,20 +135,25 @@ def main(args=None):
         args.config = read_config_file(args.config)
 
     # create the generator
-    generator = create_generator(args)
+    backbone = models.backbone(args.backbone)
+    generator = create_generator(args, backbone.preprocess_image)
 
     # optionally load anchor parameters
     anchor_params = None
+    pyramid_levels = None
     if args.config and 'anchor_parameters' in args.config:
         anchor_params = parse_anchor_parameters(args.config)
+    if args.config and 'pyramid_levels' in args.config:
+        pyramid_levels = parse_pyramid_levels(args.config)
 
     # load the model
     print('Loading model, this may take a second...')
     model = models.load_model(args.model, backbone_name=args.backbone)
+    generator.compute_shapes = make_shapes_callback(model)
 
     # optionally convert the model
     if args.convert_model:
-        model = models.convert_model(model, anchor_params=anchor_params)
+        model = models.convert_model(model, anchor_params=anchor_params, pyramid_levels=pyramid_levels)
 
     # print model summary
     # print(model.summary())
@@ -158,7 +163,7 @@ def main(args=None):
         from ..utils.coco_eval import evaluate_coco
         evaluate_coco(generator, model, args.score_threshold)
     else:
-        average_precisions = evaluate(
+        average_precisions, inference_time = evaluate(
             generator,
             model,
             iou_threshold=args.iou_threshold,
@@ -179,6 +184,8 @@ def main(args=None):
         if sum(total_instances) == 0:
             print('No test instances found.')
             return
+
+        print('Inference time for {:.0f} images: {:.4f}'.format(generator.size(), inference_time))
 
         print('mAP using the weighted average of precisions among classes: {:.4f}'.format(sum([a * b for a, b in zip(total_instances, precisions)]) / sum(total_instances)))
         print('mAP: {:.4f}'.format(sum(precisions) / sum(x > 0 for x in total_instances)))

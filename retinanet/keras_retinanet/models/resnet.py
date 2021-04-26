@@ -14,8 +14,7 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
-import keras
-from keras.utils import get_file
+from tensorflow import keras
 import keras_resnet
 import keras_resnet.models
 
@@ -53,7 +52,7 @@ class ResNetBackbone(Backbone):
         elif depth == 152:
             checksum = '6ee11ef2b135592f8031058820bb9e71'
 
-        return get_file(
+        return keras.utils.get_file(
             filename,
             resource,
             cache_subdir='models',
@@ -109,7 +108,15 @@ def resnet_retinanet(num_classes, backbone='resnet50', inputs=None, modifier=Non
         resnet = modifier(resnet)
 
     # create the full model
-    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=resnet.outputs[1:], **kwargs)
+    # resnet.outputs contains 4 layers
+    backbone_layers = {
+        'C2': resnet.outputs[0],
+        'C3': resnet.outputs[1],
+        'C4': resnet.outputs[2],
+        'C5': resnet.outputs[3]
+    }
+
+    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=backbone_layers, **kwargs)
 
 
 def resnet50_retinanet(num_classes, inputs=None, **kwargs):

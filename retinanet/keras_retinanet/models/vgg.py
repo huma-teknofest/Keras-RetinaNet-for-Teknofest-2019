@@ -15,8 +15,7 @@ limitations under the License.
 """
 
 
-import keras
-from keras.utils import get_file
+from tensorflow import keras
 
 from . import retinanet
 from . import Backbone
@@ -45,7 +44,7 @@ class VGGBackbone(Backbone):
         else:
             raise ValueError("Backbone '{}' not recognized.".format(self.backbone))
 
-        return get_file(
+        return keras.utils.get_file(
             '{}_weights_tf_dim_ordering_tf_kernels_notop.h5'.format(self.backbone),
             resource,
             cache_subdir='models',
@@ -96,4 +95,12 @@ def vgg_retinanet(num_classes, backbone='vgg16', inputs=None, modifier=None, **k
     # create the full model
     layer_names = ["block3_pool", "block4_pool", "block5_pool"]
     layer_outputs = [vgg.get_layer(name).output for name in layer_names]
-    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=layer_outputs, **kwargs)
+
+    # C2 not provided
+    backbone_layers = {
+        'C3': layer_outputs[0],
+        'C4': layer_outputs[1],
+        'C5': layer_outputs[2]
+    }
+
+    return retinanet.retinanet(inputs=inputs, num_classes=num_classes, backbone_layers=backbone_layers, **kwargs)
