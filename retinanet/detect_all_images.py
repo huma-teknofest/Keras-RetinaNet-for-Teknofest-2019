@@ -69,8 +69,8 @@ for image_filename in tqdm(sdd_images):
 
     frame_json = {}
 
-    frame_json["frame_id"] = image_filename.replace(".jpg","").replace("../dataset_test/","")
-    frame_json["objeler"] = []
+    frame_json["frame_id"] = int(image_filename.replace(".jpg","").replace("../dataset_test/",""))
+    frame_json["nesneler"] = []
         
     
     # visualize detections
@@ -84,6 +84,8 @@ for image_filename in tqdm(sdd_images):
         colors = [[255,172,31], [161, 222, 251]]
         color = colors[label]
 
+        landing_status = -1 #inis_durumunis
+
         b = box.astype(int)
         
         if labels_to_names[label] == "arac":
@@ -96,7 +98,20 @@ for image_filename in tqdm(sdd_images):
 
         #JSON ADD
         if labels_to_names[label] == "arac":
-            frame_json["objeler"].append({"tur": labels_to_names[label], "x1":int(box[0]), "y1":int(box[1]), "x2":int(box[2]), "y2":int(box[3])}) 
+            frame_json["nesneler"].append({
+                "sinif": int(label), 
+                "inis_durumu": landing_status,
+                "sinirlayici_kutu": {
+                    "ust_sol": {
+                        "x":int(box[0]), 
+                        "y":int(box[1]), 
+                    },
+                    "alt_sag": {
+                        "x":int(box[2]), 
+                        "y":int(box[3]), 
+                    }
+                }
+            }) 
     
     
     results_json.append(frame_json)
@@ -109,13 +124,13 @@ for image_filename in tqdm(sdd_images):
     draw_conv = cv2.cvtColor(draw, cv2.COLOR_BGR2RGB)
     cv2.imwrite(output_path, draw_conv)
 
-results = {}
-results["cevaplar"] = results_json
+#results = {}
+#results["cevaplar"] = results_json
 
 #SAVE RESULT JSON
 with open('{0}/results_{1}.json'.format(results_path,dt_now), 'w') as fp:
     json.dump(results_json, fp)
 
 #SAVE RESULT JSON
-with open('{0}/results_{1}_toplu.json'.format(results_path,dt_now), 'w') as fp:
-    json.dump(results, fp)
+#with open('{0}/results_{1}_toplu.json'.format(results_path,dt_now), 'w') as fp:
+#    json.dump(results, fp)
