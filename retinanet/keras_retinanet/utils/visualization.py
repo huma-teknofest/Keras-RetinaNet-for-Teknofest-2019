@@ -50,7 +50,7 @@ def draw_caption(image, box, caption, color):
     cv2.putText(image, caption, (b[0], b[1] - int(0.3 * text_height)), cv2.FONT_HERSHEY_SIMPLEX, 0.45,(0, 0, 0), lineType=cv2.LINE_AA)
 
 
-def draw_boxes(image, boxes, color, thickness=2):
+def draw_boxes(image, boxes, color, thickness=1):
     """ Draws boxes on an image with a given color.
 
     # Arguments

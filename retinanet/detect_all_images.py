@@ -1,10 +1,9 @@
-import keras
-print(keras.__version__)
 # import keras_retinanet
 from keras_retinanet import models
 from keras_retinanet.utils.image import read_image_bgr, preprocess_image, resize_image
 from keras_retinanet.utils.visualization import draw_box, draw_caption
 from keras_retinanet.utils.colors import label_color
+from keras_retinanet.utils.gpu import setup_gpu
 
 # import miscellaneous modules
 import cv2
@@ -15,6 +14,10 @@ import argparse
 from datetime import datetime 
 import json
 from tqdm import tqdm
+
+import tensorflow as tf
+import logging
+tf.get_logger().setLevel(logging.ERROR)
 
 
 model_interface_name = 'teknofest19_huma_resnet50_21_37_inference.h5'
