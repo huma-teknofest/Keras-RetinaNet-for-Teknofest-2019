@@ -6,7 +6,7 @@ keras==2.4.3
 matplotlib
 numpy==1.19.5
 six==1.15.0
-opencv-python==3.4.13.47
+opencv-python==4.2.0.32
 pillow
 progressbar2
 tensorflow-gpu==2.4.1
