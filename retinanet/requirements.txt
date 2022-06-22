@@ -4,7 +4,7 @@ keras-resnet==0.2.0
 h5py==2.10.0
 keras==2.4.3
 matplotlib
-numpy==1.19.5
+numpy==1.22.0
 six==1.15.0
 opencv-python==3.4.13.47
 pillow
